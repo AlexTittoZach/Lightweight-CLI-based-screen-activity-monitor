@@ -1,4 +1,4 @@
-A Windows-based screen time tracker built with Python.
+A Windows-based screen time tracker built purely with Python that works on your terminal.
 
 simple but effective features  -
     - Active window tracking
@@ -10,11 +10,13 @@ simple but effective features  -
 
 Installation -
     pip install -r requirements.txt
-(few dependencies only needed)
+(no worries few dependencies only needed)
 
 RUN -
     python tracker.py
 
+
+Initially planned to make it as a package so any windows user can access using pip install, will share updates later. 
 
 
 
