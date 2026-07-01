@@ -18,7 +18,7 @@ PRODUCTIVE_APPS = [
     "python",
     "mysql",
     "docker",
-    "terminal"
+    "terminal",
     "claude",
     "linkedIn",
     "ubuntu",
@@ -26,6 +26,23 @@ PRODUCTIVE_APPS = [
     "vscode",
     "anti-gravity",
     "overleaf"
+]
+
+CODING_KEYWORDS = [
+
+    "visual studio code",
+    "vscode",
+    "cursor",
+    "pycharm",
+    "python",
+    "jupyter",
+    "docker",
+    "terminal",
+    "ubuntu",
+    "mysql",
+    "claude",
+    "chatgpt",
+    "github"
 ]
 
 
@@ -105,28 +122,33 @@ def get_coding_time():
 
     cursor = conn.cursor()
 
-    placeholders = ",".join(
-        "?" for _ in PRODUCTIVE_APPS
-    )
-
-    query = f"""
-    SELECT SUM(duration)
+    cursor.execute("""
+    SELECT
+        app_name,
+        window_title,
+        duration
     FROM app_usage
     WHERE DATE(start_time)=DATE('now')
-    AND app_name IN ({placeholders})
-    """
+    """)
 
-    cursor.execute(
-        query,
-        PRODUCTIVE_APPS
-    )
-
-    total = cursor.fetchone()[0] or 0
+    rows = cursor.fetchall()
 
     conn.close()
 
-    return total
+    coding_time = 0
 
+    for app, title, duration in rows:
+
+        text = f"{app} {title}".lower()
+
+        if any(
+            keyword in text
+            for keyword in CODING_KEYWORDS
+        ):
+
+            coding_time += duration
+
+    return coding_time
 
 # ---------------------------------
 # PRODUCTIVITY SCORE
