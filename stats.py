@@ -1,10 +1,31 @@
 import sqlite3
 
 PRODUCTIVE_APPS = [
-    "Code.exe",
-    "pycharm64.exe",
-    "Cursor.exe",
-    "WindowsTerminal.exe"
+
+    "chatgpt",
+    "github",
+    "stackoverflow",
+    "documentation",
+    "docs",
+    "visual studio code",
+    "pycharm",
+    "cursor",
+    "jupyter",
+    "notebook",
+    "leetcode",
+    "hackerrank",
+    "research",
+    "python",
+    "mysql",
+    "docker",
+    "terminal"
+    "claude",
+    "linkedIn",
+    "ubuntu",
+    "docker",
+    "vscode",
+    "anti-gravity",
+    "overleaf"
 ]
 
 
@@ -120,6 +141,7 @@ def get_productivity_score():
     cursor.execute("""
     SELECT
         app_name,
+        window_title,
         duration
     FROM app_usage
     WHERE DATE(start_time)=DATE('now')
@@ -127,18 +149,24 @@ def get_productivity_score():
 
     rows = cursor.fetchall()
 
+    conn.close()
+
     productive = 0
+
     total = 0
 
-    for app, duration in rows:
+    for app, title, duration in rows:
 
         total += duration
 
-        if app in PRODUCTIVE_APPS:
+        text = f"{app} {title}".lower()
+
+        if any(
+            keyword in text
+            for keyword in PRODUCTIVE_APPS
+        ):
 
             productive += duration
-
-    conn.close()
 
     if total == 0:
         return 0
