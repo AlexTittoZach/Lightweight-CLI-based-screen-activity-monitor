@@ -1,6 +1,10 @@
 import time
 from datetime import datetime
 
+from single_instance_lock import (
+    acquire_lock
+)
+
 from rich.live import Live
 from rich.console import Group
 from rich.table import Table
@@ -27,9 +31,8 @@ from stats import (
     format_time
 )
 
-# ---------------------------------
+
 # CONFIG
-# ---------------------------------
 
 IDLE_LIMIT = 30
 SAVE_INTERVAL = 30
@@ -44,9 +47,14 @@ IGNORED_TITLES = [
     "AsKeybdHkToast App Window"
 ]
 
-# ---------------------------------
 # INIT
-# ---------------------------------
+if not acquire_lock():
+
+    print(
+        "\nTracking is already running. Stop existing instance before starting a new instance."
+    )
+
+    raise SystemExit
 
 init_db()
 
@@ -55,9 +63,8 @@ current_title = None
 
 tracking_start = datetime.now()
 
-# ---------------------------------
+
 # SAVE SESSION
-# ---------------------------------
 
 def save_current_session():
 
@@ -90,9 +97,7 @@ def save_current_session():
             duration
         )
 
-# ---------------------------------
 # HEATMAP
-# ---------------------------------
 
 def build_heatmap():
 
@@ -145,9 +150,8 @@ def build_heatmap():
 
     return table
 
-# ---------------------------------
+
 # DASHBOARD
-# ---------------------------------
 
 def build_dashboard():
 
@@ -233,9 +237,8 @@ def build_dashboard():
         build_heatmap()
     )
 
-# ---------------------------------
+
 # MAIN LOOP
-# ---------------------------------
 
 try:
 
@@ -247,12 +250,11 @@ try:
         while True:
 
             idle_time = int(
-                get_idle_seconds()
+                get_idle_seconds()  
             )
 
-            # -------------------------
+            
             # IDLE DETECTION
-            # -------------------------
 
             if idle_time > IDLE_LIMIT:
 
@@ -299,9 +301,8 @@ try:
 
                     tracking_start = datetime.now()
 
-            # -------------------------
+            
             # TRACK ACTIVE WINDOW
-            # -------------------------
 
             if not current_state["is_idle"]:
 
